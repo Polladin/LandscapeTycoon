@@ -6,6 +6,11 @@
 #include <QWidget>
 #include <QTimer>
 #include <QMenu>
+#include "Map.h"
+//#include "paint_map.h"
+
+#include "ui_mainwindow.h"
+#include <cmath>
 
 namespace Ui {
 class MainWindow;
@@ -49,7 +54,9 @@ private slots:
             break;
       }
 
-  };
+  }
+
+  void paint_map_on_display(QPainter* painter);
 
   void addBuild();
   void addLink();
@@ -71,7 +78,6 @@ private:
     int coord[2], init_coord[2];
     double left_path[2];
     bool stop;
-    QString str;
 
   QMenu*   m_pContextMenu;
   QAction* m_pAddBuild;
@@ -90,6 +96,8 @@ private:
   unsigned int fromBuild;
 
   QPoint curPos;
+
+  Map map;
 };
 
 #endif // MAINWINDOW_H

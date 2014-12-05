@@ -1,7 +1,9 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include <QtGui>
-#include <cmath>
+#include "paint_map.h"
+#include "add_functions.h"
+//#include "ui_mainwindow.h"
+//#include <QtGui>
+//#include <cmath>
 
 enum{
     CHOOSE_BUILD = 1,
@@ -51,6 +53,8 @@ unsigned int link_road[3][2] = {
     {2, 0}
 };
 
+QString str;
+
 void addTrainToStruct (unsigned int p1, unsigned int p2, float speed)
 {
     trains[count_train].left_path[0] = 0;
@@ -71,51 +75,106 @@ void addTrainToStruct (unsigned int p1, unsigned int p2, float speed)
     ++count_train;
 }
 
-void tainStep()
+
+void next_step(TMainDynObject* obj)
 {
-    for (unsigned int i = 0; i < count_train; ++i)
+    switch (obj->orientation)
     {
-        if (trains[i].state == TRAIN_FORWARD)
+        case STEP_TOP:
+                --obj->cur_pos.Y;
+            break;
+
+        case STEP_BOT:
+                ++obj->cur_pos.Y;
+            break;
+
+        case STEP_LEFT:
+                --obj->cur_pos.X;
+            break;
+
+        case STEP_RIGHT:
+                ++obj->cur_pos.X;
+            break;
+    }
+
+    obj->orientation = *obj->steps.begin();
+    obj->steps.erase(obj->steps.begin());
+    obj->left_path = 0;
+}
+
+void stepToDynObject(TMainDynObject* obj)
+{
+    if (obj->steps.size() != 0)
+    {
+        obj->left_path += obj->speed;
+        if (obj->orientation == STEP_BOT || obj->orientation == STEP_TOP )
         {
-            if (    std::abs(trains[i].p2.x() - trains[i].p1.x()) <= std::abs(trains[i].left_path[0])
-                 && std::abs(trains[i].p2.y() - trains[i].p1.y()) <= std::abs(trains[i].left_path[1]))
+            if (obj->left_path > POINT_HEIGHT)
             {
-                trains[i].state = TRAIN_BACK;
-                trains[i].left_path[0] = 0;
-                trains[i].left_path[1] = 0;
-                int x = trains[i].p1.x(), y = trains[i].p1.y();
-                trains[i].p1.setX(trains[i].p2.x());
-                trains[i].p1.setY(trains[i].p2.y());
-                trains[i].p2.setX(x);
-                trains[i].p2.setY(y);
-            }
-            else
-            {
-                trains[i].left_path[0] += trains[i].speed_x;
-                trains[i].left_path[1] += trains[i].speed_y;
+                next_step(obj);
             }
         }
-        else if (trains[i].state == TRAIN_BACK)
+        else
         {
-            if (   std::abs(trains[i].p2.x() - trains[i].p1.x()) <= std::abs(trains[i].left_path[0])
-                && std::abs(trains[i].p2.y() - trains[i].p1.y()) <= std::abs(trains[i].left_path[1]))
+            if (obj->left_path > POINT_WIDTH)
             {
-                trains[i].state = TRAIN_FORWARD;
-                trains[i].left_path[0] = 0;
-                trains[i].left_path[1] = 0;
-                int x = trains[i].p1.x(), y = trains[i].p1.y();
-                trains[i].p1.setX(trains[i].p2.x());
-                trains[i].p1.setY(trains[i].p2.y());
-                trains[i].p2.setX(x);
-                trains[i].p2.setY(y);
-            }
-            else
-            {
-                trains[i].left_path[0] -= trains[i].speed_x;
-                trains[i].left_path[1] -= trains[i].speed_y;
+                next_step(obj);
             }
         }
     }
+
+}
+
+void tainStep(Map* map)
+{
+    for (std::list<TMainDynObject*>::iterator i = map->dynObjects.begin(); i != map->dynObjects.end(); ++i)
+    {
+        stepToDynObject(*i);
+    }
+
+//    for (unsigned int i = 0; i < count_train; ++i)
+//    {
+//        if (trains[i].state == TRAIN_FORWARD)
+//        {
+//            if (    std::abs(trains[i].p2.x() - trains[i].p1.x()) <= std::abs(trains[i].left_path[0])
+//                 && std::abs(trains[i].p2.y() - trains[i].p1.y()) <= std::abs(trains[i].left_path[1]))
+//            {
+//                trains[i].state = TRAIN_BACK;
+//                trains[i].left_path[0] = 0;
+//                trains[i].left_path[1] = 0;
+//                int x = trains[i].p1.x(), y = trains[i].p1.y();
+//                trains[i].p1.setX(trains[i].p2.x());
+//                trains[i].p1.setY(trains[i].p2.y());
+//                trains[i].p2.setX(x);
+//                trains[i].p2.setY(y);
+//            }
+//            else
+//            {
+//                trains[i].left_path[0] += trains[i].speed_x;
+//                trains[i].left_path[1] += trains[i].speed_y;
+//            }
+//        }
+//        else if (trains[i].state == TRAIN_BACK)
+//        {
+//            if (   std::abs(trains[i].p2.x() - trains[i].p1.x()) <= std::abs(trains[i].left_path[0])
+//                && std::abs(trains[i].p2.y() - trains[i].p1.y()) <= std::abs(trains[i].left_path[1]))
+//            {
+//                trains[i].state = TRAIN_FORWARD;
+//                trains[i].left_path[0] = 0;
+//                trains[i].left_path[1] = 0;
+//                int x = trains[i].p1.x(), y = trains[i].p1.y();
+//                trains[i].p1.setX(trains[i].p2.x());
+//                trains[i].p1.setY(trains[i].p2.y());
+//                trains[i].p2.setX(x);
+//                trains[i].p2.setY(y);
+//            }
+//            else
+//            {
+//                trains[i].left_path[0] -= trains[i].speed_x;
+//                trains[i].left_path[1] -= trains[i].speed_y;
+//            }
+//        }
+//    }
 }
 
 void initBuildAndLink()
@@ -201,6 +260,8 @@ void MainWindow::addTrain()
     state = CHOOSE_NEXT_TRAIN_BUILD;
 }
 
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -250,6 +311,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_pAddLink,SIGNAL(triggered()),this,SLOT(addLink()));
     connect(m_pAddTrain,SIGNAL(triggered()),this,SLOT(addTrain()));
 
+    addTestRoad(&map);
+    addTestObject(&map);
+    addTestDynObject(&map);
 
     ui->setupUi(this);
 }
@@ -277,23 +341,7 @@ void MainWindow::step()
 {
     if (!stopUnitMove)
     {
-        tainStep();
-//        if (!stop)
-//        {
-//            left_path[0] += (600 - 100) / 100.0;
-//            left_path[1] += (100 - 250) / 100.0;
-//            coord[0] = init_coord[0] + (int)left_path[0]; // 1000; //600
-//            coord[1] = init_coord[1] + (int)left_path[1]; //100
-//        }
-//        else
-//        {
-//            left_path[0] -= (600 - 100) / 100.0;
-//            left_path[1] -= (100 - 250) / 100.0;
-//            coord[0] = init_coord[0] + (int)left_path[0]; // 1000; //600
-//            coord[1] = init_coord[1] + (int)left_path[1]; //100
-//        }
-//        if( coord[0] >= 600 || coord[1] <= 100) stop = true;
-//        if( coord[0] <= 100 || coord[1] >= 250) stop = false;
+        tainStep(&map);
     }
 }
 
@@ -309,73 +357,151 @@ void MainWindow::changeEvent(QEvent *e)
     }
 }
 
+
 void MainWindow::paintEvent(QPaintEvent*)
 {
     //create a QPainter and pass a pointer to the device.
     //A paint device can be a QWidget, a QPixmap or a QImage
     QPainter painter(this);
 
-    //a simple line
-//    painter.drawLine(1,1,100,100);
+    paint_map_on_display(&painter);
 
-//    //create a black pen that has solid line
-//    //and the width is 2.
-//    QPen myPen(Qt::black, 2, Qt::SolidLine);
-//    painter.setPen(myPen);
-//    painter.drawLine(100,100,100,1);
-
-//    //draw a point
-//    myPen.setColor(Qt::red);
-//    painter.drawPoint(110,110);
-
-//    //draw a polygon
-//    QPolygon polygon;
-//    polygon << QPoint(130, 140) << QPoint(180, 170)
-//             << QPoint(180, 140) << QPoint(220, 110)
-//             << QPoint(140, 100);
-//     painter.drawPolygon(polygon);
-
-     //draw an ellipse
-     //The setRenderHint() call enables antialiasing, telling QPainter to use different
-     //color intensities on the edges to reduce the visual distortion that normally
-     //occurs when the edges of a shape are converted into pixels
-     painter.setRenderHint(QPainter::Antialiasing, true);
-     painter.setPen(QPen(Qt::black) ); //, 1, Qt::DashDotLine, Qt::RoundCap));
-     painter.setBrush(QBrush(Qt::green, Qt::SolidPattern));
-     //painter.drawEllipse(200, 80, 400, 240);
+    step();
+}
 
 
-     painter.setPen(QPen(Qt::black,line_width));
 
-     for (unsigned int i = 0; i < count_link; ++i )
-     {
-        painter.drawLine(  builds[links[i][0]][0] + rect_width/2, builds[links[i][0]][1] + rect_hight/2
-                         , builds[links[i][1]][0] + rect_width/2, builds[links[i][1]][1] + rect_hight/2 );
-     }
+bool isPainted(t_status status)
+{
+    if (status == FILL_OBJECT) return true;
 
-     painter.drawChord(450,225,20,20,0,360*16);
+    return false;
+}
 
-     for (unsigned int i = 0; i < count_rect; ++i )
-     {
-        painter.drawRect(builds[i][0],builds[i][1],rect_width,rect_hight);
-     }
+void paint_road(QPainter* painter, TMainRoad* road)
+{
+     painter->setPen(QPen(Qt::black) );
+     painter->setBrush(QBrush(Qt::gray, Qt::SolidPattern));
 
-//     painter.drawRect(coord[0],coord[1],rect_width,rect_hight);
-     str = QString::number(count_train);
+     painter->drawRect(road->cur_pos.X*POINT_WIDTH, road->cur_pos.Y*POINT_HEIGHT, POINT_WIDTH, POINT_HEIGHT);
+}
+
+void paint_build(QPainter* painter, TMainObject* road)
+{
+    painter->setPen(QPen(Qt::black)); //,1,Qt::SolidLine,Qt::RoundCap) );
+    painter->setBrush(QBrush(Qt::green, Qt::SolidPattern));
+
+    painter->drawRect(road->cur_pos.X*POINT_WIDTH, road->cur_pos.Y*POINT_HEIGHT, POINT_WIDTH*BUILD_WIDTH, POINT_HEIGHT*BUILD_HEIGHT);
+}
+
+void paintDynObject(QPainter* painter, TMainDynObject* obj)
+{
+    painter->setPen(QPen(Qt::black)); //,1,Qt::SolidLine,Qt::RoundCap) );
+    painter->setBrush(QBrush(Qt::red, Qt::SolidPattern));
+
+    QRectF rect;// = QRectF(obj->cur_pos.X*POINT_WIDTH, obj->cur_pos.Y*POINT_HEIGHT, POINT_WIDTH, POINT_HEIGHT);
+
+    QPainterPath path;
+    if (obj->orientation == STEP_TOP)
+    {
+        rect = QRectF(obj->cur_pos.X*POINT_WIDTH, obj->cur_pos.Y*POINT_HEIGHT - static_cast<t_coordinate>(obj->left_path), POINT_WIDTH, POINT_HEIGHT);
+        path.moveTo(rect.left() + (rect.width() / 2), rect.top());
+        path.lineTo(rect.bottomLeft());
+        path.lineTo(rect.bottomRight());
+        path.lineTo(rect.left() + (rect.width() / 2), rect.top());
+    }
+    else if (obj->orientation == STEP_BOT)
+    {
+        rect = QRectF(obj->cur_pos.X*POINT_WIDTH, obj->cur_pos.Y*POINT_HEIGHT + static_cast<t_coordinate>(obj->left_path), POINT_WIDTH, POINT_HEIGHT);
+        path.moveTo(rect.left() + (rect.width() / 2), rect.bottom());
+        path.lineTo(rect.topLeft());
+        path.lineTo(rect.topRight());
+        path.lineTo(rect.left() + (rect.width() / 2), rect.bottom());
+    }
+    else if (obj->orientation == STEP_LEFT)
+    {
+        rect = QRectF(obj->cur_pos.X*POINT_WIDTH - static_cast<t_coordinate>(obj->left_path), obj->cur_pos.Y*POINT_HEIGHT, POINT_WIDTH, POINT_HEIGHT);
+        path.moveTo(rect.left(), rect.top()+ (rect.height() / 2));
+        path.lineTo(rect.topRight());
+        path.lineTo(rect.bottomRight());
+        path.lineTo(rect.left(), rect.top()+ (rect.height() / 2));
+    }
+    else
+    {
+        rect = QRectF(obj->cur_pos.X*POINT_WIDTH + static_cast<t_coordinate>(obj->left_path), obj->cur_pos.Y*POINT_HEIGHT, POINT_WIDTH, POINT_HEIGHT);
+        path.moveTo(rect.right(), rect.top()+ (rect.height() / 2));
+        path.lineTo(rect.topLeft());
+        path.lineTo(rect.bottomLeft());
+        path.lineTo(rect.right(), rect.top()+ (rect.height() / 2));
+    }
+
+    painter->fillPath(path, QBrush(QColor ("blue")));
+}
+
+void MainWindow::paint_map_on_display(QPainter* painter)
+{
+    for (unsigned i = 0; i < MAP_WIDTH; ++i)
+    {
+        for (unsigned j = 0; j < MAP_HEIGHT; ++j)
+        {
+            if (isPainted(map.field[i][j].status))
+            {
+                if (map.field[i][j].road.size() != 0)
+                {
+                    str = QString::number(i) + QString(" ") + QString::number(j);
+                    paint_road(painter, map.field[i][j].road.front());
+                }
+                else if( map.field[i][j].object.size() != 0)
+                {
+                    TMainObject* build = map.field[i][j].object.front();
+                    if (build->cur_pos.X == i && build->cur_pos.Y == j)
+                    {
+                        paint_build(painter, build);
+                    }
+                }
+            }
+        }
+    }
+
+    for (std::list<TMainDynObject*>::iterator i = map.dynObjects.begin(); i != map.dynObjects.end(); ++i)
+    {
+        paintDynObject(painter, *i);
+    }
+    //paint Dyn Objects
 
 
-     //painter.drawRect(coord[0],coord[1],rect_width,rect_hight);
+    painter->drawText(QRect(20, 20, 200, 50), Qt::AlignCenter, str);
 
-     for (unsigned int i = 0; i < count_train; ++i )
-     {
-         painter.drawRect( static_cast<int>(trains[i].p1.x()+trains[i].left_path[0])
-                          ,static_cast<int>(trains[i].p1.y()+trains[i].left_path[1])
-                          ,rect_width,rect_hight);
-         str = QString::number(static_cast<int>(trains[i].p1.x()+trains[i].left_path[0]))
-                 + QString(" + ") + QString::number(static_cast<int>(trains[i].p1.y()+trains[i].left_path[1]));
-     }
+ /*
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setPen(QPen(Qt::black) ); //, 1, Qt::DashDotLine, Qt::RoundCap));
+    painter->setBrush(QBrush(Qt::green, Qt::SolidPattern));
 
-     painter.drawText(QRect(20, 20, 200, 50), Qt::AlignCenter, str);
 
-     step();
+    painter->setPen(QPen(Qt::black,line_width));
+
+    for (unsigned int i = 0; i < count_link; ++i )
+    {
+       painter->drawLine(  builds[links[i][0]][0] + rect_width/2, builds[links[i][0]][1] + rect_hight/2
+                        , builds[links[i][1]][0] + rect_width/2, builds[links[i][1]][1] + rect_hight/2 );
+    }
+
+    painter->drawChord(450,225,20,20,0,360*16);
+
+    for (unsigned int i = 0; i < count_rect; ++i )
+    {
+       painter->drawRect(builds[i][0],builds[i][1],rect_width,rect_hight);
+    }
+
+    for (unsigned int i = 0; i < count_train; ++i )
+    {
+        painter->drawRect( static_cast<int>(trains[i].p1.x()+trains[i].left_path[0])
+                         ,static_cast<int>(trains[i].p1.y()+trains[i].left_path[1])
+                         ,rect_width,rect_hight);
+        str = QString::number(static_cast<int>(trains[i].p1.x()+trains[i].left_path[0]))
+                + QString(" + ") + QString::number(static_cast<int>(trains[i].p1.y()+trains[i].left_path[1]));
+    }
+
+    painter->drawText(QRect(20, 20, 200, 50), Qt::AlignCenter, str);
+*/
 }
