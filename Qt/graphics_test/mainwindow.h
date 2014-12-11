@@ -25,6 +25,8 @@ protected:
     void changeEvent(QEvent *e);
     void paintEvent (QPaintEvent*);
     void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *releaseEvent);
+    void mouseMoveEvent(QMouseEvent *ev);
 
     int getObjectInMap(QPoint point);
 
@@ -38,6 +40,10 @@ private:
     QMenu*   m_pBuild;
     QAction* m_pAddBuild;
 
+    TMainObject* drag_obj;
+    unsigned drag_state;
+
+    QString str;
     QPoint curPos;
     Map map;
 };

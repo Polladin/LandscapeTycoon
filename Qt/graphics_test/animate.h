@@ -2,6 +2,8 @@
 #define ANIMATE_H
 
 #include "../../src/map/Map.h"
+#include "../../src/dyn_obj/TMainDynObject.h"
+#include "../../src/test/add_functions.h"
 
 void animate_one_state(Map* map);
 

@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include "../../src/test/add_functions.cpp"
+#include "../../src/map/Map.cpp"
 #include "painter.h"
 #include "animate.h"
 
@@ -10,6 +11,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    setMouseTracking(true);
+    str = QString("Hi");
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -51,11 +55,19 @@ void MainWindow::changeEvent(QEvent *e)
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
-    int numBuild;
-
     if (event->button() == Qt::LeftButton)
     {
+        str = QString("Click");
+        curPos.setX(event->pos().x());
+        curPos.setY(event->pos().y());
 
+        if (drag_state == 0)
+        {
+            if ((drag_obj = map.get_build_object(Point(curPos.x()/POINT_WIDTH, curPos.y()/POINT_HEIGHT))) != 0)
+            {
+                drag_state = 1;
+            }
+        }
     }
     else
     {
@@ -63,6 +75,22 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     }
 }
 
+void MainWindow::mouseReleaseEvent(QMouseEvent*)
+{
+    str = QString("Release");
+    drag_state = 0;
+}
+
+void MainWindow::mouseMoveEvent(QMouseEvent *ev) {
+
+    QPoint pos = ev->pos();
+    str = QString("%1, %2").arg(pos.x()/POINT_WIDTH).arg(pos.y()/POINT_HEIGHT);
+
+    if (drag_state == 1)
+    {
+       map.moveBuildObj(drag_obj, Point(pos.x()/POINT_WIDTH, pos.y()/POINT_HEIGHT));
+    }
+}
 
 
 void MainWindow::paintEvent(QPaintEvent*)
@@ -72,6 +100,8 @@ void MainWindow::paintEvent(QPaintEvent*)
     paint_map_on_display(&painter, &map);
 
     animate_one_state(&map);
+
+    painter.drawText(QRect(20, 20, 200, 50), Qt::AlignCenter, str);
 }
 
 void MainWindow::contextMenuRequested(QPoint point)

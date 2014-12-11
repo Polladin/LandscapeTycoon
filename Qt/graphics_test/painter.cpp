@@ -7,8 +7,8 @@ void paint_map_on_display(QPainter* painter, Map* map)
     {
         for (unsigned j = 0; j < MAP_HEIGHT; ++j)
         {
-            if (isPainted(map->field[i][j].status))
-            {
+          //  if (isPainted(map->field[i][j].status))
+          // {
                 if (map->field[i][j].road.size() != 0)
                 {
                     //str = QString::number(i) + QString(" ") + QString::number(j);
@@ -22,7 +22,7 @@ void paint_map_on_display(QPainter* painter, Map* map)
                         paint_build(painter, build);
                     }
                 }
-            }
+         // }
         }
     }
 
@@ -41,12 +41,17 @@ void paint_road(QPainter* painter, TMainRoad* road)
      painter->drawRect(road->cur_pos.X*POINT_WIDTH, road->cur_pos.Y*POINT_HEIGHT, POINT_WIDTH, POINT_HEIGHT);
 }
 
-void paint_build(QPainter* painter, TMainObject* road)
+void paint_build(QPainter* painter, TMainObject* build)
 {
     painter->setPen(QPen(Qt::black)); //,1,Qt::SolidLine,Qt::RoundCap) );
     painter->setBrush(QBrush(Qt::green, Qt::SolidPattern));
 
-    painter->drawRect(road->cur_pos.X*POINT_WIDTH, road->cur_pos.Y*POINT_HEIGHT, POINT_WIDTH*BUILD_WIDTH, POINT_HEIGHT*BUILD_HEIGHT);
+    QRect rect = QRect(build->cur_pos.X*POINT_WIDTH, build->cur_pos.Y*POINT_HEIGHT
+                       , POINT_WIDTH*BUILD_WIDTH, POINT_HEIGHT*BUILD_HEIGHT);
+    painter->drawRect(rect);
+
+    if (build->goods.size() != 0)
+        painter->drawText(rect, Qt::AlignCenter, QString::number(build->goods.begin()->count_good));
 }
 
 void paintDynObject(QPainter* painter, TMainDynObject* obj)

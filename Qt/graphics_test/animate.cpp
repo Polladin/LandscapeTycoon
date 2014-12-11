@@ -1,11 +1,22 @@
 
 #include "animate.h"
-
+#include "../../src/dyn_obj/TMainDynObject.cpp"
 
 void animate_one_state(Map* map)
 {
     for (std::list<TMainDynObject*>::iterator i = map->dynObjects.begin(); i != map->dynObjects.end(); ++i)
     {
+        TMainDynObject* obj = *i;
+        if (obj->steps.size() == 0)
+        {
+            TMainObject* build = map->get_build_object(Point((*obj->next_station).point.X,(*obj->next_station).point.Y));
+            if (build != 0)
+            {
+                obj->arrived(build);
+            }
+            if ( (++obj->next_station) == obj->stations.end()) obj->next_station = obj->stations.begin();
+            calcStepsForDynObject(map, obj);
+        }
         stepToDynObject(*i);
     }
 }

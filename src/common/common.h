@@ -1,6 +1,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 #include <vector>
+#include <list>
 
 enum{
       MAP_WIDTH = 100
@@ -31,6 +32,7 @@ typedef unsigned int t_status;
 typedef unsigned int t_object;
 typedef unsigned int t_road;
 typedef unsigned int t_step;
+typedef unsigned int t_good;
 
 struct Point
 {
@@ -40,6 +42,23 @@ struct Point
     t_coordinate Y;
 };
 
+struct Package
+{
+	t_good 			good_type;
+	unsigned int	count_good;
+	unsigned int	width_good;
+};
+
+struct checkPoint
+{
+	Point point;
+    std::list<Package> doListArrive;
+	std::list<Package> doListOut;
+
+	bool get_all;
+	bool put_all;
+};
+
 class TMainObject
 {
   public:
@@ -47,6 +66,9 @@ class TMainObject
 
     unsigned int object_id;
     t_object type;
+
+    std::list<Package> goods;
+    unsigned int loads;
 };
 
 class TMainRoad
@@ -58,17 +80,5 @@ class TMainRoad
     t_road type;
 };
 
-class TMainDynObject
-{
-  public:
-    Point cur_pos;
 
-    std::vector<t_step> steps;
-    std::vector<Point> stations;
-    std::vector<Point>::iterator next_station;
-
-    t_step orientation;
-    float speed;
-    float left_path;
-};
 #endif // COMMON_H
