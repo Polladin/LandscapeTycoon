@@ -33,12 +33,14 @@ protected:
 private slots:
     void contextMenuRequested(QPoint point);
     void m_add_build();
+    void m_add_road();
 
 private:
     Ui::MainWindow *ui;
 
     QMenu*   m_pBuild;
     QAction* m_pAddBuild;
+    QAction* m_pAddRoad;
 
     TMainObject* drag_obj;
     unsigned drag_state;

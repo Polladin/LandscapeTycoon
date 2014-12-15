@@ -25,7 +25,8 @@ std::list<Package>::iterator findGood(std::list<Package>* goods, t_good good_typ
 
 void TMainDynObject::arrived(TMainObject* end_point)
 {
-    if (end_point->cur_pos.X != next_station->point.X || end_point->cur_pos.Y != next_station->point.Y) return;
+    if (cur_pos.X != next_station->point.X || cur_pos.Y != next_station->point.Y) return;
+
 	//UNLOAD
 	if (next_station->put_all && loads > 0)
 	{

@@ -5,6 +5,11 @@
 #include "../../src/map/Map.cpp"
 #include "painter.h"
 #include "animate.h"
+#include "../../src/algorithms/find_path.h"
+#include "../../src/algorithms/find_path.cpp"
+
+#include <deque>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -21,12 +26,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //set contex menu
     setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(this,	       SIGNAL(customContextMenuRequested(const QPoint)),this,
-          SLOT(contextMenuRequested(QPoint)));
+    connect(this, SIGNAL(customContextMenuRequested(const QPoint)),this,
+                  SLOT(contextMenuRequested(QPoint)));
 
     m_pBuild = new QMenu();
     m_pAddBuild = m_pBuild->addAction("add Build");
+    m_pAddRoad = m_pBuild->addAction("add Road");
+
     connect(m_pAddBuild, SIGNAL(triggered()), this, SLOT(m_add_build()));
+    connect(m_pAddRoad , SIGNAL(triggered()), this, SLOT(m_add_road()));
+
 
     setWindowTitle("LandscapeTycoon");
     setFixedSize(800,500);
@@ -34,6 +43,22 @@ MainWindow::MainWindow(QWidget *parent) :
     addTestRoad(&map);
     addTestObject(&map);
     addTestDynObject(&map);
+
+    //UNIT TEST
+    qDebug() << "UNIT TEST START";
+    Find_path find_path;
+    std::deque<Point> path;
+
+    find_path.find_road_path(&map, Point(11,11), Point(12,14), &path);
+
+    std::deque<Point>::iterator it  = path.begin();
+    std::deque<Point>::iterator ite = path.end();
+    for (; it != ite; ++it)
+    {
+        qDebug() << QString("Path X=") << (*it).X << QString("Path Y=") << (*it).Y;
+    }
+
+    qDebug() << "UNIT TEST STOP";
 }
 
 MainWindow::~MainWindow()
@@ -137,5 +162,12 @@ int MainWindow::getObjectInMap(QPoint point)
     t_coordinate x_point = curPos.x() / POINT_WIDTH;
     t_coordinate y_point = curPos.y() / POINT_HEIGHT;
     addBuildObj(&map, x_point, y_point, 1);
+ }
+
+ void MainWindow::m_add_road()
+ {
+    t_coordinate x_point = curPos.x() / POINT_WIDTH;
+    t_coordinate y_point = curPos.y() / POINT_HEIGHT;
+    addRoad(&map, x_point, y_point);
  }
 
