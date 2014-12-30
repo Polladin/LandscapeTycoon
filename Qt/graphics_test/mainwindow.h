@@ -6,8 +6,11 @@
 #include <QTimer>
 #include <QMenu>
 
-#include "../../src/map/Map.h"
+#include "painter.h"
+#include "animate.h"
 
+#include "../../src/map/Map.h"
+#include "../../src/algorithms/find_path.h"
 
 namespace Ui {
 class MainWindow;
@@ -34,6 +37,9 @@ private slots:
     void contextMenuRequested(QPoint point);
     void m_add_build();
     void m_add_road();
+    void m_find_path();
+    void m_set_path();
+    void m_add_dyn_object();
 
 private:
     Ui::MainWindow *ui;
@@ -41,13 +47,25 @@ private:
     QMenu*   m_pBuild;
     QAction* m_pAddBuild;
     QAction* m_pAddRoad;
+    QAction* m_pFindPath;
+    QAction* m_pAddDynObj;
+
+    QMenu*   m_pDynObj;
+    QAction* m_pSetPath;
 
     TMainObject* drag_obj;
     unsigned drag_state;
 
-    QString str;
+    QString str, menu_label;
     QPoint curPos;
     Map map;
+    Find_path find_path;
+
+    // fill do List for dynObjs
+    TMainDynObject* dynObj;
+    std::vector<checkPoint> stations;
+
+    unsigned menu_is_active;
 };
 
 #endif // MAINWINDOW_H

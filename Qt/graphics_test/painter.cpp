@@ -1,6 +1,7 @@
 
 #include "painter.h"
 
+
 void paint_map_on_display(QPainter* painter, Map* map)
 {
     for (unsigned i = 0; i < MAP_WIDTH; ++i)
@@ -9,18 +10,18 @@ void paint_map_on_display(QPainter* painter, Map* map)
         {
           //  if (isPainted(map->field[i][j].status))
           // {
-                if (map->field[i][j].road.size() != 0)
-                {
-                    //str = QString::number(i) + QString(" ") + QString::number(j);
-                    paint_road(painter, map->field[i][j].road.front());
-                }
-                else if( map->field[i][j].object.size() != 0)
+                if( map->field[i][j].object.size() != 0)
                 {
                     TMainObject* build = map->field[i][j].object.front();
                     if (build->cur_pos.X == i && build->cur_pos.Y == j)
                     {
                         paint_build(painter, build);
                     }
+                }
+                else if (map->field[i][j].road.size() != 0)
+                {
+                    //str = QString::number(i) + QString(" ") + QString::number(j);
+                    paint_road(painter, map->field[i][j].road.front());
                 }
          // }
         }
@@ -104,4 +105,63 @@ bool isPainted(t_status status)
     if (status == FILL_OBJECT) return true;
 
     return false;
+}
+
+inline QRect get_menu_rect(unsigned name)
+{
+    return  QRect(menu_coords[name][0], menu_coords[name][1],
+                  menu_coords[name][2], menu_coords[name][3]);
+}
+
+void paint_debug_label(QPainter* painter, QString label)
+{
+
+    QRect label_rect        = get_menu_rect(LABEL);
+    QRect but_OK_rect       = get_menu_rect(BUT_OK);
+    QRect but_load_rect     = get_menu_rect(BUT_LOAD);
+    QRect but_unload_rect   = get_menu_rect(BUT_UNLOAD);
+    QRect but_save_rect     = get_menu_rect(BUT_SAVE);
+    QRect but_loadXML_rect  = get_menu_rect(BUT_LOADXML);
+
+    /////////////////////////////////
+    //paint label
+    painter->setPen(QPen(Qt::black) );
+    painter->setBrush(QBrush(Qt::white, Qt::SolidPattern));
+
+    painter->drawRect(label_rect);
+    painter->drawText(label_rect, Qt::AlignCenter, label);
+
+
+    ///////////////////////////////
+    //paint buttons
+    painter->setPen(QPen(Qt::black) );
+    painter->setBrush(QBrush(Qt::gray, Qt::SolidPattern));
+
+    painter->drawRect(but_OK_rect);
+    painter->drawText(but_OK_rect, Qt::AlignCenter, QString("Ok"));
+    painter->drawRect(but_load_rect);
+    painter->drawText(but_load_rect, Qt::AlignCenter, QString("Load"));
+    painter->drawRect(but_unload_rect);
+    painter->drawText(but_unload_rect, Qt::AlignCenter, QString("Unload"));
+    painter->drawRect(but_save_rect);
+    painter->drawText(but_save_rect, Qt::AlignCenter, QString("Save"));
+    painter->drawRect(but_loadXML_rect);
+    painter->drawText(but_loadXML_rect, Qt::AlignCenter, QString("Load"));
+}
+
+int isButtonPress(Point p)
+{
+    for (unsigned i = 0; i < COUNT_BUT; ++i)
+    {
+        if (   menu_coords[i][0]                     <= p.X
+            && menu_coords[i][0] + menu_coords[i][2] >= p.X
+            && menu_coords[i][1]                     <= p.Y
+            && menu_coords[i][1] + menu_coords[i][3] >= p.Y
+           )
+        {
+            return i;
+        }
+    }
+
+    return -1;
 }

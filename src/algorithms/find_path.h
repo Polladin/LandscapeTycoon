@@ -8,10 +8,10 @@
 #ifndef FIND_PATH_H_
 #define FIND_PATH_H_
 
+#include <deque>
+
 #include "../common/common.h"
 #include "../map/Map.h"
-
-#include <deque>
 
 enum
 {
@@ -52,6 +52,7 @@ private:
 
 	bool get_adj (Point const src, Point& adj, Map* map, unsigned id_adj);
 	bool is_needed_adj(Map* map, Point const is_adj, Point& adj, unsigned& id_adj);
+    bool is_pre_last_point(Map* map, Point const cur_pos, Point const target_pos);
 
 	std::deque<Point> queue;
 

@@ -8,6 +8,8 @@
 
 #include "TMainDynObject.h"
 
+#include <QDebug>
+
 
 std::list<Package>::iterator findGood(std::list<Package>* goods, t_good good_type)
 {
@@ -91,4 +93,60 @@ void TMainDynObject::arrived(TMainObject* end_point)
 			goods.push_back(pack);
 //		}
 	}
+
+    if( next_station->get_all && loads == 0)
+    {
+        state = STATE_STOP;
+    }
+    else
+    {
+        state = STATE_MOVE;
+    }
 }
+
+t_step TMainDynObject::find_next_step(Point cur_pos, Point next_pos)
+{
+    if (cur_pos.X != next_pos.X)
+    {
+        if (cur_pos.X < next_pos.X) return STEP_RIGHT;
+        else return STEP_LEFT;
+    }
+    else
+    {
+        if (cur_pos.Y < next_pos.Y) return STEP_BOT;
+        else return STEP_TOP;
+    }
+}
+
+bool TMainDynObject::change_path(std::deque<Point>& path)
+{
+    std::deque<Point>::iterator it  = path.begin();
+    std::deque<Point>::iterator ite = path.end();
+    if ((*it).X != cur_pos.X || (*it).Y != cur_pos.Y)
+    {
+        return false;
+    }
+    if ((*it).X == ((*(ite-1)).X) && (*it).Y == ((*(ite-1)).Y))
+    {
+        return false;
+    }
+
+    Point pos = cur_pos;
+    steps.clear();
+
+    ++it; //next step after self position
+    for (; it != ite; ++it)
+    {
+        steps.push_back (find_next_step(pos, *it));
+        pos = *it;
+    }
+
+    //stop_obj()
+    orientation = steps[0];
+    steps.erase(steps.begin());
+    steps.push_back(*(steps.end()-1));
+    left_path = 0;
+
+    return true;
+}
+

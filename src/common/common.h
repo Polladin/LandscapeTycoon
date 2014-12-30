@@ -1,5 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
+
 #include <vector>
 #include <list>
 
@@ -25,6 +26,8 @@ enum{
     , STEP_RIGHT 	= 2
     , STEP_TOP 		= 3
     , STEP_BOT 		= 4
+
+    , SET_PATH_FOR_DYN_OBJ = 1
 };
 
 typedef int 		 t_coordinate;
@@ -62,18 +65,26 @@ struct checkPoint
 class TMainObject
 {
   public:
+    TMainObject()
+    {
+        loads = 100;
+    }
+
     Point cur_pos;
 
     unsigned int object_id;
     t_object type;
 
     std::list<Package> goods;
-    unsigned int loads;
+    unsigned  loads;
 };
 
 class TMainRoad
 {
   public:
+    TMainRoad() { cur_pos.X=0; cur_pos.Y=0; }
+    TMainRoad(Point p) { cur_pos.X=p.X; cur_pos.Y=p.Y; }
+
     Point cur_pos;
 
     unsigned int road_id;

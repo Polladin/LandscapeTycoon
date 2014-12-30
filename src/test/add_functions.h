@@ -9,7 +9,9 @@ void addRoad(Map* map, t_coordinate x, t_coordinate y);
 
 void addTestRoad(Map* map);
 
+void set_doList( TMainDynObject* obj, std::vector<checkPoint> stations, unsigned first_station);
 
+void createDynObject(Map* map, Point pos);
 void addDynObject(Map* map, t_coordinate x, t_coordinate y);
 
 void addBuildObj(Map* map, t_coordinate x, t_coordinate y, unsigned object_id);

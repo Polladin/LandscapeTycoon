@@ -42,6 +42,29 @@ bool Find_path::is_needed_adj(Map* map, Point const is_adj, Point& adj, unsigned
 	return false;
 }
 
+bool Find_path::is_pre_last_point(Map* map, Point const cur_pos, Point const target_pos)
+{
+    if ( ( (    cur_pos.X-1 == target_pos.X
+             || cur_pos.X+1 == target_pos.X
+            )
+            && cur_pos.Y == target_pos.Y
+          )
+         ||
+          ( (    cur_pos.Y-1 == target_pos.Y
+              || cur_pos.Y+1 == target_pos.Y
+             )
+             && cur_pos.X == target_pos.X
+           )
+       )
+    {
+        if (map->field[target_pos.X][target_pos.Y].object.size() != 0)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool Find_path::get_adj(Point const src, Point& adj, Map* map, unsigned id_adj)
 {
 	for (unsigned i = 0; i < MAX_ADJ; ++i)
@@ -87,6 +110,12 @@ void Find_path::find_road_path (Map* map, Point src, Point dst, std::deque<Point
 		Point u = queue.front();
 		queue.pop_front();
 
+        if (is_pre_last_point(map, u, dst))
+        {
+            path->push_front(dst);
+            dst = u;
+        }
+
         if ((u.X == dst.X) && (u.Y == dst.Y))
         {
             path_point* p = &cell[u.X][u.Y];
@@ -95,6 +124,7 @@ void Find_path::find_road_path (Map* map, Point src, Point dst, std::deque<Point
                 path->push_front(p->self_point);
                 p = p->prev;
             }
+            return;
         }
 
 		unsigned i=0;
