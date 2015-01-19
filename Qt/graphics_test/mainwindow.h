@@ -40,6 +40,7 @@ private slots:
     void m_find_path();
     void m_set_path();
     void m_add_dyn_object();
+    void m_ena_dis_move_obj();
 
 private:
     Ui::MainWindow *ui;
@@ -49,6 +50,7 @@ private:
     QAction* m_pAddRoad;
     QAction* m_pFindPath;
     QAction* m_pAddDynObj;
+    QAction* m_pEnableMove;
 
     QMenu*   m_pDynObj;
     QAction* m_pSetPath;
@@ -56,10 +58,11 @@ private:
     TMainObject* drag_obj;
     unsigned drag_state;
 
-    QString str, menu_label;
-    QPoint curPos;
-    Map map;
-    Find_path find_path;
+    QString     str, menu_label;
+    QPoint      curPos;
+    Map         map;
+    Find_path   find_path;
+    bool        enable_to_move;
 
     // fill do List for dynObjs
     TMainDynObject* dynObj;

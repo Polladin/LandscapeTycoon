@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     str = QString("Hi");
     menu_label = QString("Menu label");
     menu_is_active = false;
+    enable_to_move = false;
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -33,20 +34,22 @@ MainWindow::MainWindow(QWidget *parent) :
     ////////////////////////////////////////
     ///   configure context Menu
     ///
-    m_pBuild    = new QMenu();
-    m_pAddBuild = m_pBuild->addAction("add Build");
-    m_pAddRoad  = m_pBuild->addAction("add Road");
-    m_pFindPath = m_pBuild->addAction("find Path");
-    m_pAddDynObj= m_pBuild->addAction("add dyn obj");
+    m_pBuild        = new QMenu();
+    m_pAddBuild     = m_pBuild->addAction("add Build");
+    m_pAddRoad      = m_pBuild->addAction("add Road");
+    m_pFindPath     = m_pBuild->addAction("find Path");
+    m_pAddDynObj    = m_pBuild->addAction("add dyn obj");
+    m_pEnableMove   = m_pBuild->addAction("enable/disable move");
 
     m_pDynObj   = new QMenu();
     m_pSetPath  = m_pDynObj->addAction("Set path");
 
 
-    connect(m_pAddBuild , SIGNAL(triggered()), this, SLOT(m_add_build     ()));
-    connect(m_pAddRoad  , SIGNAL(triggered()), this, SLOT(m_add_road      ()));
-    connect(m_pFindPath , SIGNAL(triggered()), this, SLOT(m_find_path     ()));
-    connect(m_pAddDynObj, SIGNAL(triggered()), this, SLOT(m_add_dyn_object()));
+    connect(m_pAddBuild  , SIGNAL(triggered()), this, SLOT(m_add_build       ()));
+    connect(m_pAddRoad   , SIGNAL(triggered()), this, SLOT(m_add_road        ()));
+    connect(m_pFindPath  , SIGNAL(triggered()), this, SLOT(m_find_path       ()));
+    connect(m_pAddDynObj , SIGNAL(triggered()), this, SLOT(m_add_dyn_object  ()));
+    connect(m_pEnableMove, SIGNAL(triggered()), this, SLOT(m_ena_dis_move_obj()));
 
     connect(m_pSetPath , SIGNAL(triggered()), this, SLOT(m_set_path ()));
     ///
@@ -140,7 +143,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
                 }
             }
         }
-        if (drag_state == 0)
+        if (drag_state == 0 && enable_to_move)
         {
             if ((drag_obj = map.get_build_object(Point(curPos.x()/POINT_WIDTH, curPos.y()/POINT_HEIGHT))) != 0)
             {
@@ -309,4 +312,9 @@ void MainWindow::m_add_dyn_object()
     {
         createDynObject(&map, point, 4);
     }
+}
+
+void MainWindow::m_ena_dis_move_obj()
+{
+    enable_to_move = enable_to_move ? false:true;
 }
