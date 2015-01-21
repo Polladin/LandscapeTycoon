@@ -53,6 +53,30 @@ void addTestObject(Map* map)
 }
 
 
+void set_doList( TMainDynObject* obj, std::vector<checkPoint> stations, unsigned first_station)
+{
+    obj->resetObj();
+
+    for (unsigned i = 0; i < stations.size(); ++i)
+    {
+        qDebug() << "add station " << i;
+        obj->stations.push_back(stations[i]);
+    }
+    qDebug() << "Staton size = " << obj->stations.size();
+    obj->next_station = obj->stations.end()-1;
+
+}
+
+void createDynObject(Map* map, Point pos, float speed)
+{
+    TMainDynObject* obj = new TMainDynObject;
+    obj->cur_pos.X  = pos.X;
+    obj->cur_pos.Y  = pos.Y;
+    obj->speed      = speed;
+
+    map->field[pos.X][pos.Y].dynObjects.push_back(obj);
+    map->dynObjects.push_back(obj);
+}
 
 void addDynObject(Map* map, t_coordinate x, t_coordinate y, std::vector<checkPoint> stations, unsigned first_station
                   , float speed)
@@ -60,56 +84,32 @@ void addDynObject(Map* map, t_coordinate x, t_coordinate y, std::vector<checkPoi
     TMainDynObject* obj = new TMainDynObject;
     obj->cur_pos.X = x;
     obj->cur_pos.Y = y;
-    for (unsigned i = 0; i < stations.size(); ++i)
-    {
-        obj->stations.push_back(stations[i]);
-    }
-    obj->next_station = obj->stations.begin() + first_station;
     obj->speed = speed;
-    obj->left_path = 0;
 
+    set_doList(obj, stations, first_station);
     map->dynObjects.push_back(obj);
-}
-
-
-void fake_set_path(Map* map, Point p1, Point p2, std::vector<t_step>* path)
-{
-
-	if(p1.X == 11 && p1.Y == 10 && p2.X == 13 && p2.Y == 14)
-	{
-        path->push_back(STEP_BOT);
-		path->push_back(STEP_BOT);
-		path->push_back(STEP_RIGHT);
-		path->push_back(STEP_BOT);
-		path->push_back(STEP_BOT);
-		path->push_back(STEP_RIGHT);
-
-		//stop step
-		path->push_back(STEP_RIGHT);
-	}
-	else
-	{
-		path->push_back(STEP_LEFT);
-		path->push_back(STEP_TOP);
-		path->push_back(STEP_TOP);
-		path->push_back(STEP_LEFT);
-		path->push_back(STEP_TOP);
-		path->push_back(STEP_TOP);
-
-		//stop_step
-		path->push_back(STEP_TOP);
-	}
 }
 
 void calcStepsForDynObject(Map* map, TMainDynObject* obj)
 {
-    //call function to find path
-    fake_set_path(map, obj->cur_pos, (*obj->next_station).point, &obj->steps);
+    t_coordinate x_point = (*obj->next_station).point.X;
+    t_coordinate y_point = (*obj->next_station).point.Y;
 
-    obj->orientation = obj->steps[0];
-    obj->orientation = *obj->steps.begin();
-    obj->steps.erase(obj->steps.begin());
-    obj->left_path = 0;
+    if (map->field[x_point][y_point].road.size() != 0 || map->field[x_point][y_point].object.size() != 0)
+    {
+       std::deque<Point> path;
+       Find_path find_path;
+       find_path.find_road_path(map, Point(obj->cur_pos.X,obj->cur_pos.Y), Point(x_point,y_point), &path);
+
+       if (path.size() != 0)
+       {
+           obj->change_path(path);
+       }
+    }
+
+//    obj->orientation = obj->steps[0];
+//    obj->steps.erase(obj->steps.begin());
+//    obj->left_path = 0;
 }
 
 void addTestDynObject(Map* map)
@@ -129,6 +129,12 @@ void addTestDynObject(Map* map)
 	station.put_all = true;
 	stations.push_back(station);
 
-    addDynObject(map, 11, 10, stations, 0, 4);
-    calcStepsForDynObject(map, map->dynObjects.back());
+//    addDynObject(map, 11, 10, stations, 0, 4);
+    createDynObject(map, Point(11,12), 4);
+
+//    (*map->dynObjects.back()).cur_pos.X = 11;
+//    (*map->dynObjects.back()).cur_pos.Y = 10;
+
+
+//    calcStepsForDynObject(map, map->dynObjects.back());
 }

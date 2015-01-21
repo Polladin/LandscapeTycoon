@@ -8,7 +8,36 @@
 
 #include "Map.h"
 
+template <class T>
+void delete_objects(T it, T ite)
+{
+    for (; it != ite; ++it)
+    {
+        delete (*it);
+    }
+}
 
+void Map::clear()
+{
+    for (unsigned i = 0; i < MAP_WIDTH; ++i)
+    {
+        for (unsigned j = 0; j < MAP_HEIGHT; ++j)
+        {
+            field[i][j].dynObjects.clear();
+            field[i][j].object.clear();
+
+            delete_objects(field[i][j].road.begin(), field[i][j].road.end());
+            field[i][j].road.clear();
+        }
+    }
+
+    delete_objects(dynObjects.begin(), dynObjects.end());
+    dynObjects.clear();
+
+    delete_objects(object.begin(), object.end());
+    object.clear();
+
+}
 
 TMainObject* Map::get_build_object(Point point)
 {
