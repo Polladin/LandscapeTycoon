@@ -61,6 +61,7 @@ private:
     QString     str, menu_label;
     QPoint      curPos;
     Map         map;
+    Map         show_map;
     Find_path   find_path;
     bool        enable_to_move;
 

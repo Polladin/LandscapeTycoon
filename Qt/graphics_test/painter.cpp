@@ -34,6 +34,31 @@ void paint_map_on_display(QPainter* painter, Map* map)
     //painter->drawText(QRect(20, 20, 200, 50), Qt::AlignCenter, str);
 }
 
+void paint_objects_on_dsplay(QPainter* painter, Map* map)
+{
+
+    std::list<TMainRoad*>::iterator road_it  = map->roadObjs.begin();
+    std::list<TMainRoad*>::iterator road_ite = map->roadObjs.end  ();
+    for (; road_it != road_ite; ++road_it)
+    {
+        paint_road(painter, *road_it);
+    }
+
+    std::list<TMainObject*>::iterator obj_it  = map->object.begin();
+    std::list<TMainObject*>::iterator obj_ite = map->object.end();
+    for (; obj_it != obj_ite; ++obj_it)
+    {
+         paint_build(painter, *obj_it);
+    }
+
+    std::list<TMainDynObject*>::iterator dynObj_it  = map->dynObjects.begin();
+    std::list<TMainDynObject*>::iterator dynObj_ite = map->dynObjects.end();
+    for (; dynObj_it != dynObj_ite; ++dynObj_it)
+    {
+         paintDynObject(painter, *dynObj_it);
+    }
+}
+
 void paint_road(QPainter* painter, TMainRoad* road)
 {
      painter->setPen(QPen(Qt::black) );

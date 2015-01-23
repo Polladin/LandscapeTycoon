@@ -37,6 +37,7 @@ class Map{
 
     std::list<TMainDynObject*>  dynObjects;
     std::list<TMainObject*>     object;
+    std::list<TMainRoad*>       roadObjs;
 };
 
 #endif // MAP_H

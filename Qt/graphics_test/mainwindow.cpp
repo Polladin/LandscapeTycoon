@@ -216,7 +216,9 @@ void MainWindow::paintEvent(QPaintEvent*)
 {
     QPainter painter(this);
 
-    paint_map_on_display(&painter, &map);
+//    paint_map_on_display(&painter, &map);
+    paint_objects_on_dsplay(&painter, &map);
+//  paint_map_on_display(&painter, &show_map);
 
     animate_one_state(&map);
 

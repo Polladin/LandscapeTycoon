@@ -8,8 +8,9 @@ void addRoad(Map* map, t_coordinate x, t_coordinate y)
     road->cur_pos.X = x;
     road->cur_pos.Y = y;
     road->type = 0;
-    map->field[x][y].road.push_back( road );
+    map->field[x][y].road.push_back(road);
     map->field[x][y].status = FILL_OBJECT;
+    map->roadObjs.push_back(road);
 }
 
 void addTestRoad(Map* map)
@@ -28,6 +29,8 @@ void addBuildObj(Map* map, t_coordinate x, t_coordinate y, unsigned object_id)
     build->type = BUILD;
     build->cur_pos.X = x;
     build->cur_pos.Y = y;
+
+    map->object.push_back(build);
 
     for (unsigned i = 0; i < BUILD_WIDTH; ++i)
     {

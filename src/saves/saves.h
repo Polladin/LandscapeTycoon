@@ -242,6 +242,7 @@ void load_main_objects(QDomElement *node, std::list<TMainObject*> *objects, Map 
 
          load_goods(&elem_child, &obj->goods);
 
+         map->object.push_back(obj);
          objects->push_back(obj);
          map->field[obj->cur_pos.X+1][obj->cur_pos.Y  ].object.push_back(obj);
          map->field[obj->cur_pos.X  ][obj->cur_pos.Y+1].object.push_back(obj);
@@ -251,7 +252,7 @@ void load_main_objects(QDomElement *node, std::list<TMainObject*> *objects, Map 
      }
 }
 
-void load_road(QDomElement *node, std::list<TMainRoad*> *road)
+void load_road(QDomElement *node, std::list<TMainRoad*> *road, Map* map)
 {
     QString const name = "Road";
     QDomElement elem_child = node->firstChildElement(name);
@@ -266,6 +267,7 @@ void load_road(QDomElement *node, std::list<TMainRoad*> *road)
         p_road->type        = elem_child.attributeNode("road_type").nodeValue().toUInt();
 
         road->push_back(p_road);
+        map->roadObjs.push_back(p_road);
 
         qDebug() << "Road X ="  << elem_child.attributeNode("X").nodeValue()
                  << "Y ="       << elem_child.attributeNode("Y").nodeValue()
@@ -421,7 +423,7 @@ void load_field(QDomElement *node, Map *map)
                  << "Y =" << Y
                  << "status =" << elem_child.attributeNode("status").nodeValue();
 
-        load_road(&elem_child, &map->field[X][Y].road);
+        load_road(&elem_child, &map->field[X][Y].road, map);
 
         load_main_objects(&elem_child, &map->field[X][Y].object, map);
 
@@ -487,9 +489,9 @@ int saves(Map* map)
     QDomElement root = doc.createElement("Map");
     doc.appendChild(root);
 
-    for (unsigned i = 5; i < 18; ++i)
+    for (unsigned i = 0; i < MAP_WIDTH; ++i)
     {
-       for (unsigned j = 5; j < 18; ++j)
+       for (unsigned j = 0; j < MAP_HEIGHT; ++j)
        {
            QDomElement tag = doc.createElement("Field");
 

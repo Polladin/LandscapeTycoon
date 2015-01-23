@@ -30,6 +30,8 @@ int isButtonPress(Point);
 
 void paint_map_on_display(QPainter* painter, Map* map);
 
+void paint_objects_on_dsplay(QPainter* painter, Map* map);
+
 void paint_road(QPainter* painter, TMainRoad* road);
 
 void paint_build(QPainter* painter, TMainObject* road);

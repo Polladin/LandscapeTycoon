@@ -29,6 +29,7 @@ HEADERS  += mainwindow.h                            \
             ../../src/map/Map.h                     \
             ../../src/test/add_functions.h          \
             ../../src/dyn_obj/TMainDynObject.h      \
-            ../../src/saves/saves.h
+            ../../src/saves/saves.h                 \
+            ../../src/menu/menuWindow.h
 
 FORMS    += mainwindow.ui
