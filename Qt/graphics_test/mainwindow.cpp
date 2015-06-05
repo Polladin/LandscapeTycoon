@@ -266,7 +266,8 @@ int MainWindow::getObjectInMap(QPoint point)
  {
     t_coordinate x_point = curPos.x() / POINT_WIDTH;
     t_coordinate y_point = curPos.y() / POINT_HEIGHT;
-    addBuildObj(&map, x_point, y_point, 1);
+    TMainObject* build = new TMainObject();
+    addBuildObj(&map, build, x_point, y_point, 1);
  }
 
  void MainWindow::m_add_road()

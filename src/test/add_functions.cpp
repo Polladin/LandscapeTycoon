@@ -21,11 +21,10 @@ void addTestRoad(Map* map)
     addRoad(map, 12,14);
 }
 
-void addBuildObj(Map* map, t_coordinate x, t_coordinate y, unsigned object_id)
+void addBuildObj(Map* map, TMainObject* build, t_coordinate x, t_coordinate y, unsigned object_id)
 {
-    TMainObject* build = new TMainObject;
+//    TMainObject* build = new TMainObject;
     build->object_id = object_id;
-    build->type = BUILD;
     build->cur_pos.X = x;
     build->cur_pos.Y = y;
 
@@ -48,8 +47,13 @@ void addBuildObj(Map* map, t_coordinate x, t_coordinate y, unsigned object_id)
 
 void addTestObject(Map* map)
 {
-    addBuildObj(map, 10, 9, 1);
-    addBuildObj(map, 13, 14, 2);
+    TWareHouse* warhouse = new TWareHouse();
+    TMine* mine = new TMine();
+    TLumberJack* lumber_jack = new TLumberJack();
+
+    addBuildObj(map, warhouse, 10, 9, 1);
+    addBuildObj(map, mine, 13, 14, 2);
+    addBuildObj(map, lumber_jack, 5, 10, 3);
 }
 
 

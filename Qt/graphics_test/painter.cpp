@@ -52,7 +52,25 @@ void paint_build(QPainter* painter, TMainObject* build)
     painter->drawRect(rect);
 
     if (build->goods.size() != 0)
-        painter->drawText(rect, Qt::AlignCenter, QString::number(build->goods.begin()->count_good));
+    {
+        if (build->type == obj_types::LUMBERJACK)
+        {
+            painter->drawText(rect, Qt::AlignCenter, QString("Lu-")+QString::number(((TLumberJack*)build)->get_wood_count()));
+        }
+        else if (build->type == obj_types::MINE)
+        {
+            painter->drawText(rect, Qt::AlignCenter, QString("Mi-")+QString::number(((TMine*)build)->get_good_count()));
+        }
+        else if (build->type == obj_types::WAREHOUSE)
+        {
+            painter->drawText(rect, Qt::AlignCenter, QString("Wa-")+QString::number(((TWareHouse*)build)->get_good_count()));
+        }
+        else
+        {
+            painter->drawText(rect, Qt::AlignCenter, QString::number(build->goods.begin()->count_good));
+        }
+        //painter->drawText(rect, Qt::AlignCenter, QString::number(build->goods.begin()->count_good));
+    }
 }
 
 void paintDynObject(QPainter* painter, TMainDynObject* obj)

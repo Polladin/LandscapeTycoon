@@ -32,37 +32,42 @@ void TMainDynObject::arrived(TMainObject* end_point)
 	//UNLOAD
 	if (next_station->put_all && loads > 0)
 	{
-		std::list<Package>::iterator it_in_dyn_object  = goods.begin();
-		std::list<Package>::iterator ite_in_dyn_object = goods.end();
-		std::list<Package>::iterator it_in_build;
+        if (end_point->unload(goods)) loads = 0;
+        //else if not all goos unloaded
 
-		while (it_in_dyn_object != ite_in_dyn_object)
-		{
-			if ((it_in_build = findGood(&end_point->goods, it_in_dyn_object->good_type)) != end_point->goods.end())
-			{
-				std::list<Package>::iterator rem = it_in_dyn_object;
-				it_in_build->count_good += it_in_dyn_object->count_good;
-				loads -= it_in_dyn_object->count_good * it_in_dyn_object->width_good;
 
-				++it_in_dyn_object;
-				goods.erase(rem);
-			}
-			else
-			{
-                std::list<Package>::iterator rem = it_in_dyn_object;
-                Package pack;
-                pack.good_type  = it_in_dyn_object->good_type;
-                pack.width_good = it_in_dyn_object->width_good;
-                pack.count_good =  it_in_dyn_object->count_good;
+//		std::list<Package>::iterator it_in_dyn_object  = goods.begin();
+//		std::list<Package>::iterator ite_in_dyn_object = goods.end();
+//		std::list<Package>::iterator it_in_build;
 
-                loads -= it_in_dyn_object->count_good * it_in_dyn_object->width_good;
+//		while (it_in_dyn_object != ite_in_dyn_object)
+//		{
 
-                end_point->goods.push_back(pack);
-                ++it_in_dyn_object;
-                goods.erase(rem);
-			}
-		}
-	}
+//			if ((it_in_build = findGood(&end_point->goods, it_in_dyn_object->good_type)) != end_point->goods.end())
+//			{
+//				std::list<Package>::iterator rem = it_in_dyn_object;
+//				it_in_build->count_good += it_in_dyn_object->count_good;
+//				loads -= it_in_dyn_object->count_good * it_in_dyn_object->width_good;
+
+//				++it_in_dyn_object;
+//				goods.erase(rem);
+//			}
+//			else
+//			{
+//                std::list<Package>::iterator rem = it_in_dyn_object;
+//                Package pack;
+//                pack.good_type  = it_in_dyn_object->good_type;
+//                pack.width_good = it_in_dyn_object->width_good;
+//                pack.count_good =  it_in_dyn_object->count_good;
+
+//                loads -= it_in_dyn_object->count_good * it_in_dyn_object->width_good;
+
+//                end_point->goods.push_back(pack);
+//                ++it_in_dyn_object;
+//                goods.erase(rem);
+//			}
+//		}
+    }
 
 	//DOWNLAOD
 	if(next_station->get_all && end_point->goods.size() != 0)
