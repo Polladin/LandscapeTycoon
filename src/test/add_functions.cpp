@@ -63,10 +63,10 @@ void set_doList( TMainDynObject* obj, std::vector<checkPoint> stations, unsigned
 
     for (unsigned i = 0; i < stations.size(); ++i)
     {
-        qDebug() << "add station " << i;
+//        qDebug() << "add station " << i;
         obj->stations.push_back(stations[i]);
     }
-    qDebug() << "Staton size = " << obj->stations.size();
+//    qDebug() << "Staton size = " << obj->stations.size();
     obj->next_station = obj->stations.end()-1;
 
 }

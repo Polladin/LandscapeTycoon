@@ -4,15 +4,20 @@ CC=g++
 
 CFLAGS=-c -Wall
 
-all: LandscapeTycoon
+SRC= 	../src/main/main.cpp \
+	../src/test/add_functions.cpp \
+	../src/algorithms/find_path.cpp \
+	../src/dyn_obj/TMainDynObject.cpp \
+	../src/map/Map.cpp \
 
+OBJ=$(SRC:.cpp=.o)
 
-LandscapeTycoon: main.o add_functions.o
-	$(CC) main.o add_functions.o -o LandscapeTycoon.exe
-	
-main.o: ../src/main/main.cpp ../src/map/Map.h ../src/test/add_functions.h ../src/common/common.h
-	$(CC) $(CFLAGS) ../src/main/main.cpp 
-	
-add_functions.o: ../src/test/add_functions.cpp ../src/test/add_functions.h ../src/common/common.h
-	$(CC) $(CFLAGS) ../src/test/add_functions.cpp
-	
+TARGET=LandscapeTycoon 
+
+all: $(SRC) $(TARGET)
+
+$(TARGET): $(OBJ)
+	$(CC) $(OBJ) -o $@
+
+.cpp.o:
+	$(CC) $(CFLAGS) $< -o $@

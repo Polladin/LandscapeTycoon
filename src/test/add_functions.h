@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "../map/Map.h"
-
+#include "../algorithms/find_path.h"
 
 void addRoad(Map* map, t_coordinate x, t_coordinate y);
 

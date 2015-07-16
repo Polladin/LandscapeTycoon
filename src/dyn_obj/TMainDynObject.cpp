@@ -8,7 +8,7 @@
 
 #include "TMainDynObject.h"
 
-#include <QDebug>
+//#include <QDebug>
 
 
 std::list<Package>::iterator findGood(std::list<Package>* goods, t_good good_type)
